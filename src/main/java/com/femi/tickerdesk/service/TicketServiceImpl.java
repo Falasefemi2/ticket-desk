@@ -5,6 +5,10 @@ import com.femi.tickerdesk.enumFolder.TicketCategory;
 import com.femi.tickerdesk.enumFolder.TicketStatus;
 import com.femi.tickerdesk.model.Ticket;
 import com.femi.tickerdesk.model.User;
+import com.femi.tickerdesk.repository.TicketRepository;
+import com.femi.tickerdesk.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,11 +18,38 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
+
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
+
 
     @Override
     public Ticket createTicket(Ticket ticket) {
-        return null;
+        Long creatorId = ticket.getCreatedBy().getId();
+
+        User creator = userRepository.findById(creatorId)
+                .orElseThrow(() -> new EntityNotFoundException("Creator user not found"));
+
+        ticket.setCreatedBy(creator);
+
+        if (ticket.getAssignedTo() != null && ticket.getAssignedTo().getId() != null) {
+            Long assigneeId = ticket.getAssignedTo().getId();
+            User assignee = userRepository.findById(assigneeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Assignee user not found"));
+            ticket.setAssignedTo(assignee);
+        }
+
+        if (ticket.getStatus() == null) {
+            ticket.setStatus(TicketStatus.OPEN);
+        }
+
+        if (ticket.getPriority() == null) {
+            ticket.setPriority(Priority.MEDIUM);
+        }
+
+        return ticketRepository.save(ticket);
     }
 
     @Override

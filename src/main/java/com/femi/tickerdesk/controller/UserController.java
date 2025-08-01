@@ -31,7 +31,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
-
 public class UserController {
 
     private final UserService userService;
