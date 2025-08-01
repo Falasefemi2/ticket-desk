@@ -49,7 +49,7 @@ Ticker Desk is a full-featured IT helpdesk ticketing system designed to streamli
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/ticker-desk.git
+    git clone [https://github.com/your-username/ticker-desk.git
     cd ticker-desk
     ```
 2.  **Configure the database:**
